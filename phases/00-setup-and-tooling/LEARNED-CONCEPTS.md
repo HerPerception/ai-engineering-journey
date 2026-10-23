@@ -48,27 +48,35 @@ Git commits let you inspect when changes were recorded and restore earlier work.
 
 Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very large. A `.gitignore` can keep them out of ordinary Git history so the repository stays manageable.
 
+### Lesson 3: GPU Setup & Cloud — in progress
+
+- GPUs can accelerate neural network training by performing many matrix
+  operations in parallel.
+- VRAM is dedicated memory on the GPU, separate from system RAM. Although the
+  name comes from video use, it also holds data for AI workloads and limits
+  how much model data fits on the GPU.
+- Google Colab is a convenient learning option because it runs notebooks on a
+  hosted machine and avoids local GPU setup. A local NVIDIA GPU uses hardware
+  already in your computer; a rented cloud GPU offers remote compute with
+  more control and an hourly cost.
+- In Colab, enable a GPU through **Runtime → Change runtime type → GPU**. The
+  learner identified selecting a GPU runtime as the step that makes GPU
+  compute available to the notebook.
+- In the current AI journey workspace, `nvidia-smi` is unavailable and the
+  project virtual environment does not have PyTorch installed. This means the
+  workspace cannot verify local CUDA access; it does not establish whether a
+  separate personal computer has a GPU.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
 
-- **Question:** In the four-layer environment stack, which layer must be installed first?
-  - **Initial answer:** Language runtimes.
-  - **Correct answer:** System foundation.
-  - **Simple explanation:** The system is the base. Package managers, runtimes, and AI libraries depend on it.
 - **Question:** How do you check whether PyTorch can access an NVIDIA GPU?
   - **Initial answer:** `nvidia-smi --query`.
   - **Correct answer:** `import torch; print(torch.cuda.is_available())`.
   - **Simple explanation:** `nvidia-smi` checks the hardware and driver. `torch.cuda.is_available()` checks PyTorch's access to CUDA.
 
-### Lesson 2: Git & Collaboration
-
-- **Question:** Which command puts an edit into the staging area?
-  - **Initial answer:** `git commit`.
-  - **Correct answer:** `git add`.
-  - **Simple explanation:** `git add` stages the edit; `git commit` saves staged edits into history.
-
 ## Quiz results
 
-- Lesson 1, Dev Environment: **1/3**. Revisit environment layer order and the PyTorch GPU access check.
-- Lesson 2, Git & Collaboration: **3/3**.
+- Lesson 1, Dev Environment: **2/2 pre, 2/3 post (4/5 total)**. Revisit the PyTorch GPU access check.
+- Lesson 2, Git & Collaboration: **2/2 pre, 3/3 post (5/5 total)**.

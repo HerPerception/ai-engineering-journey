@@ -39,8 +39,8 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 ## Progress log
 | Date | Lesson | Quiz | Note |
 |------|--------|------|------|
-| 2026-10-23 | 00/01 | 1/3 | Identified Python as the language runtime and correctly traced a dot product; review environment layer order and checking GPU access through PyTorch. |
-| 2026-10-23 | 00/02 | 3/3 | Understood that Git commits preserve inspectable history and branches isolate experiments until merge. |
+| 2026-10-23 | 00/01 | 2/2 pre, 2/3 post (4/5 total) | Identified Python as the language runtime and correctly traced a dot product; missed how to verify PyTorch GPU access. |
+| 2026-10-23 | 00/02 | 2/2 pre, 3/3 post (5/5 total) | Understood that Git commits preserve inspectable history and branches isolate experiments until merge. |
 
 ## Review queue
-- Phase 0, Lesson 1: Review the bottom-up environment layer order and the difference between checking NVIDIA hardware with `nvidia-smi` and checking PyTorch CUDA access with `torch.cuda.is_available()`. |
+- Phase 0, Lesson 1: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`. |
