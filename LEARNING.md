@@ -41,6 +41,7 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 |------|--------|------|------|
 | 2026-10-23 | 00/01 | 2/2 pre, 2/3 post (4/5 total) | Identified Python as the language runtime and correctly traced a dot product; missed how to verify PyTorch GPU access. |
 | 2026-10-23 | 00/02 | 2/2 pre, 3/3 post (5/5 total) | Understood that Git commits preserve inspectable history and branches isolate experiments until merge. |
+| 2026-10-24 | 00/03 | 2/3 post | Ran a CPU/GPU matrix benchmark in Colab on a Tesla T4 (7.6x first run, 21.0x second); review `nvidia-smi` versus `torch.cuda.is_available()`. |
 
 ## Review queue
-- Phase 0, Lesson 1: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`. |
+- Phase 0, Lessons 1 and 3: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`.
