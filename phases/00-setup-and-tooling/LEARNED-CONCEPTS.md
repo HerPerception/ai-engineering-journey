@@ -283,6 +283,102 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - The shipped `prompt-api-troubleshooter` artifact is a small guide for
   diagnosing these common API errors.
 
+### Lesson 5: Jupyter Notebooks
+
+#### Notebook, cells, and kernel
+
+- A **Jupyter notebook** is an interactive document saved as an `.ipynb` file.
+  The file stores code cells, Markdown cells, their outputs, and notebook
+  metadata. JupyterLab, Jupyter Notebook, VS Code's Jupyter extension, and
+  Colab can all work with this notebook format.
+- A **code cell** runs Python. A **Markdown cell** displays formatted writing,
+  headings, tables, images, and math. Keeping explanation next to code and its
+  result makes a notebook useful as a lab notebook.
+- **Shift+Enter** runs the selected cell and moves to the next cell. In the
+  classic Jupyter keyboard model, Enter edits a selected cell and Escape
+  returns to command mode, where shortcuts such as A and B insert cells.
+- The **kernel** is the Python process running behind the notebook. The
+  notebook sends code to it and receives results. All code cells connected to
+  the same kernel share its imports, variables, and objects in memory.
+- Cells can be run in any order. A cell that uses a variable may work only
+  because another cell created it earlier in the current kernel, even if that
+  earlier cell appears later in the notebook or has since been deleted. Old
+  output can also remain visible after code changes, so the output may no
+  longer match the cell's current code.
+- **Restart & Run All** starts with a fresh kernel and runs cells from top to
+  bottom. If that fails, the notebook depended on hidden state or a particular
+  run order. Do this before sharing a notebook to check that it is reproducible.
+
+#### Timing and magic commands
+
+- A **magic command** is a Jupyter command for controlling the notebook. A
+  single-percent command such as `%timeit` applies to one line; a double-
+  percent command such as `%%time` applies to an entire cell. They are not
+  ordinary Python syntax.
+- `%timeit` runs a small operation repeatedly and reports timing statistics.
+  It automatically chooses how many loops to run. Use it to compare short
+  operations, not for a task with external side effects such as an API call or
+  a training job that should happen only once.
+- `%%time` measures one whole cell. Its output may show **user CPU time** for
+  work done by the Python program, **system CPU time** for work done by the
+  operating system on its behalf, their **total**, and **wall time**, which is
+  elapsed real time from start to finish. The Colab run reported 130 ms user,
+  40 microseconds system, 130 ms total, and 129 ms wall time; the small
+  difference comes from measurement and rounding.
+- `%matplotlib inline` asks Jupyter to show Matplotlib plots in the notebook.
+  Colab and some other notebook interfaces already display plots inline.
+- A leading `!`, as in `!pip install package`, runs a shell command from a
+  notebook cell. `%env NAME` inspects an environment variable. Do not display
+  a secret such as an API key while inspecting environment variables.
+- The list-versus-NumPy exercise measured 5.12 ms (± 815 µs) per Python-list
+  loop and 67.6 µs (± 1.62 µs) per NumPy loop. Since 1 ms is 1,000 µs, the
+  list version took about 5,120 µs and this NumPy operation was roughly 76x
+  faster in that run. The ± value is the reported variation (standard
+  deviation) across repeated runs. `%timeit` chose 100 loops for the slower
+  list operation and 10,000 for the faster NumPy operation to measure each
+  more reliably. This result describes only this operation and machine.
+
+#### Tables, plots, and notebook output
+
+- A **data frame** is a table of data in memory. In pandas, its columns name
+  fields and each row contains the values for one item or observation. For
+  example, a sales data frame might have `day` and `sales` columns.
+- A **plot** is a chart made from data. A line plot can make a trend over time
+  easier to see than reading a table of numbers; a histogram shows how values
+  are distributed.
+- Notebooks automatically display the last expression in a code cell. Leaving
+  `df` as the final line can show a formatted HTML table, while `print(df)`
+  displays plain text. Matplotlib output can appear below its cell, so the
+  chart is next to the code that created it. Images can also be displayed with
+  IPython's `display` helper.
+
+#### Choosing a notebook or script
+
+- Notebooks are good for exploring data, trying model ideas, visualizing
+  results, and explaining an experiment. A `.py` script is better for reusable
+  utilities, training pipelines, packages, scheduled jobs, and production code.
+- The workflow is: explore and prototype in a notebook, move stable reusable
+  code into a script, then import that script back into the notebook if needed.
+  The short rule is **explore in notebooks; ship in scripts**. A reusable
+  training pipeline should live in a script.
+- Variables remain in the kernel between cells, so large arrays and models
+  also remain in memory. This can cause a notebook's memory use to grow.
+  Delete unneeded variables with `del name`, use `gc.collect()` when
+  appropriate, or restart the kernel to clear all its in-memory objects.
+
+#### Colab and the shipped helper
+
+- Colab is a hosted notebook service based on Jupyter. The `.ipynb` notebook
+  can be saved in Google Drive or downloaded, but its runtime is a temporary
+  virtual machine that can be deleted. Files and packages installed on that
+  machine are not included just by sharing the notebook; save important files
+  separately. Google's [Colab FAQ](https://research.google.com/colaboratory/intl/en-GB/faq.html)
+  explains current storage and runtime behavior; exact resource limits can
+  change.
+- The shipped `prompt-notebook-helper` artifact is a guide for diagnosing
+  notebook problems such as hidden execution order, kernel crashes, memory
+  growth, missing plots, and package-install issues.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -308,3 +404,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   Tesla T4 and measured 7.6x speedup on the first run and 21.0x on the second.
 - Lesson 4, APIs & Keys: **3/3 post**. Correctly identified `.env`/`.gitignore`
   key storage, the lesson's `x-api-key` header, and waiting after a `429` rate limit.
+- Lesson 5, Jupyter Notebooks: **3/3 post**. Ran two cells that shared a
+  variable, compared Python-list and NumPy timings, used `%%time`, and chose a
+  plot to see a data trend.
