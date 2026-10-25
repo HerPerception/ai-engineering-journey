@@ -45,6 +45,7 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 | 2026-10-25 | 00/04 | 3/3 post | Understood that API keys identify and authorize requests, `.env` stays out of Git via `.gitignore`, and `429` means wait before retrying. |
 | 2026-10-25 | 00/05 | 3/3 post | Used shared notebook state, compared Python and NumPy timings, and learned to use Restart & Run All to catch hidden cell-order dependencies. |
 | 2026-10-25 | 00/06 | 2/2 pre, 3/3 post (5/5 total) | Explained how virtual environments isolate project packages, why lockfiles help recreate exact versions, and why `.venv/` should be ignored by Git. |
+| 2026-10-25 | 00/07 | 2/2 pre, 3/3 post (5/5 total) | Distinguished Dockerfiles, images, and containers; explained persistent volume mounts, GPU access requirements, and Compose service networking. |
 
 ## Review queue
 - Phase 0, Lessons 1 and 3: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`.

@@ -429,6 +429,73 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   computer or keeping separate local projects from interfering with one
   another.
 
+### Lesson 7: Docker for AI
+
+- **Docker** packages an application's software setup so it can run more
+  consistently on different computers. A container shares the host computer's
+  operating system kernel, unlike a full virtual machine, which includes its
+  own guest operating system. Containers are therefore usually lighter to
+  start, though they are not a guarantee that every machine behaves
+  identically.
+- A **Dockerfile** is the written recipe: instructions such as `FROM`, `ENV`,
+  and `RUN` describe how to assemble the software. A Docker **image** is the
+  packaged template built from that recipe. A **container** is a running,
+  isolated instance of an image. In the learner's analogy, the Dockerfile is
+  the written building instructions, the image is the prepared template, and
+  the container is a running copy built from it.
+- `FROM` chooses a **base image**, the starting point for the build. For
+  example, a basic Python base image is suitable for a program that does not
+  need CUDA. An NVIDIA CUDA base image is useful when the container needs
+  CUDA software. Development (`devel`) images include tools for compiling
+  code; runtime images omit many build tools and are usually smaller. The
+  exact example image and pinned package versions in a course Dockerfile are
+  examples, not universal current recommendations.
+- Dockerfile `RUN` instructions execute during image building. Each build step
+  contributes a layer, and Docker can reuse cached results when the step and
+  its inputs have not changed. This is why unchanged earlier steps can make
+  later image rebuilds faster. `ENV` sets environment values inside the
+  image, and `WORKDIR` selects the working directory used by later commands.
+- `docker build` creates an image from a Dockerfile, for example
+  `docker build -t ai-dev -f Dockerfile .`; `-t` assigns it a name and `.`
+  supplies the build context (the files made available to the build).
+  `docker run` starts a container from an image. `--rm` removes that
+  container after it exits, and `-it` allows interactive terminal use. The
+  image can remain after a container is removed.
+- A container has its own filesystem. Files kept only there can disappear
+  when the container is removed. A **volume mount** connects a folder on the
+  host computer to a path inside the container, for example
+  `-v "$PWD":/workspace` for the project folder and
+  `-v "$HOME/models":/models` for model files. The host files persist across
+  container removal and image rebuilds, avoiding repeated downloads of large
+  datasets and model weights.
+- A **port mapping**, such as `-p 8888:8888`, makes a port inside a container
+  reachable through a port on the host computer. It can expose a Jupyter
+  server from the container to a browser on the host.
+- A container does not acquire GPU hardware just because its image contains
+  CUDA software. The host computer must have a GPU and a working driver. On
+  supported Linux systems, the **NVIDIA Container Toolkit** allows Docker to
+  expose the host's NVIDIA GPU to the container, commonly with `--gpus all`.
+  The CUDA libraries can be in the image; the GPU driver is provided by the
+  host. If the host has no usable GPU, the container can still run CPU work.
+  This Docker setup is distinct from Colab, whose hosted runtime provides a
+  GPU for notebook work.
+- **Docker Compose** describes and manages multiple related containers in a
+  YAML file. For example, an AI development service and a Qdrant vector
+  database can be started together. Compose creates a shared network, so the
+  AI service can reach Qdrant by its service name, such as
+  `http://qdrant:6333`, without manually finding its changing IP address.
+  Compose can also define each service's ports, volumes, and GPU reservation.
+- AI projects commonly use different containers for development, training,
+  and inference. A development container may include Jupyter and debugging
+  tools; a training container can focus on the training script and
+  dependencies; an inference container can focus on serving a model. This
+  keeps each container's contents suited to its job.
+- Docker containers do not replace version control or dependency files. Git
+  stores source changes, while a Dockerfile describes how to build an image.
+  Large models and datasets are usually stored outside the image and connected
+  through mounts, so rebuilding the image does not require copying those
+  files into every image layer.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -460,3 +527,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 6, Python Environments: **2/2 pre, 3/3 post (5/5 total)**. Correctly
   explained package isolation, lockfiles, checking the active Python path,
   Conda/pip conflicts, and why `.venv/` belongs in `.gitignore`.
+- Lesson 7, Docker for AI: **2/2 pre, 3/3 post (5/5 total)**. Correctly
+  distinguished Docker images from containers and explained persistent
+  volumes, host-provided GPU access, and Compose networking by service name.
