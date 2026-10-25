@@ -379,6 +379,56 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   notebook problems such as hidden execution order, kernel crashes, memory
   growth, missing plots, and package-install issues.
 
+### Lesson 6: Python Environments
+
+- A **package** is reusable software installed for Python, such as NumPy or
+  PyTorch. Different projects can require different versions of the same
+  package. Installing or upgrading a package for one project can otherwise
+  interfere with another project.
+- A **virtual environment** is a project-specific place for its Python
+  interpreter and installed packages. It keeps one project's packages
+  separate from other projects and from the system Python. On Linux or
+  macOS, `python3 -m venv .venv` creates one, and
+  `source .venv/bin/activate` activates it in the current terminal session.
+  After activation, `which python` should show a path containing `.venv`.
+- `venv` comes with Python. `uv` is a separate tool that can manage Python
+  versions, environments, and packages. Conda also manages environments and
+  can handle some non-Python libraries. A virtual environment isolates
+  packages; it does not itself make code faster or install a GPU driver.
+- **`pyproject.toml`** describes a Python project and its package needs. A
+  version such as `numpy>=1.26` allows NumPy 1.26 or newer. A package may
+  itself need other packages; those are **transitive dependencies**.
+- A **lockfile** records the exact selected versions of packages, including
+  transitive dependencies, so the environment can be recreated more
+  consistently. `pyproject.toml` describes project requirements; the lockfile
+  captures the specific versions selected to meet them. Commit both to Git
+  when the project uses them.
+- Keep the environment directory, commonly `.venv/`, out of Git by listing it
+  in `.gitignore`. It can be large and is tied to the local machine. Recreate
+  it from the project's package description and lockfile instead of copying
+  it to another computer.
+- Activate the intended environment before installing or running packages.
+  `which python` shows which interpreter will run. `python -m pip install
+  package` ties pip to that interpreter, reducing the chance of installing
+  into a different Python by mistake.
+- Conda tracks packages it installs. Pip does not update Conda's package
+  records the same way, so mixing them can cause Conda's view of the
+  environment to become inaccurate and make conflicts harder to resolve. If
+  using Conda, prefer it for the environment's packages; if a package is only
+  available through pip, install Conda packages first and pip packages after.
+- For GPU troubleshooting, `nvidia-smi` reports the NVIDIA GPU and driver,
+  while `torch.version.cuda` reports the CUDA version associated with the
+  installed PyTorch build, and `torch.cuda.is_available()` checks whether
+  this PyTorch installation can currently use CUDA. A driver/build
+  incompatibility can prevent GPU use. The CUDA version displayed by
+  `nvidia-smi` describes driver capability; it does not necessarily mean the
+  same CUDA Toolkit is installed separately.
+- Google Colab supplies a managed runtime, so a learner generally does not
+  need to create a local virtual environment just to run a Colab notebook.
+  Project environments are useful when installing packages on a personal
+  computer or keeping separate local projects from interfering with one
+  another.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -407,3 +457,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 5, Jupyter Notebooks: **3/3 post**. Ran two cells that shared a
   variable, compared Python-list and NumPy timings, used `%%time`, and chose a
   plot to see a data trend.
+- Lesson 6, Python Environments: **2/2 pre, 3/3 post (5/5 total)**. Correctly
+  explained package isolation, lockfiles, checking the active Python path,
+  Conda/pip conflicts, and why `.venv/` belongs in `.gitignore`.
