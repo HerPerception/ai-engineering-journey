@@ -180,6 +180,109 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   the shell try to parse it as shell syntax, which caused the reported parse
   error; it was not a problem with the Colab GPU.
 
+### Lesson 4: APIs & Keys
+
+#### What an API call is
+
+- An **API** (application programming interface) is a way for one program to
+  ask another program for a service. In this lesson, a Python or TypeScript
+  program sends a prompt to an AI provider's server, and the server returns a
+  model response.
+- The program sending the request is the **client**; the provider's computer
+  handling it is the **server**. The **endpoint** is the web address for the
+  operation, such as Anthropic's Messages endpoint.
+- An **HTTP request** carries the action and data to the server. The lesson
+  uses `POST` to send a message request. The server sends an **HTTP response**
+  containing a status code and usually a JSON body.
+- **Headers** carry request details, such as authentication and the format of
+  the body. The **request body** contains the actual data: the model ID, an
+  output token limit, and the message. **JSON** is a text format for structured
+  data, such as objects, lists, strings, and numbers.
+- **HTTPS** protects data while it travels between the program and the server.
+  An API key is not encryption; it is a secret used to identify an account and
+  authorize requests. The provider can also use it to attribute usage to that
+  account.
+
+#### API keys and configuration
+
+- An **API key** is a secret credential. Treat it like a password: do not put
+  it in source code, screenshots, shared notebooks, chat, or a public repo. If
+  it is exposed, revoke it and create a replacement.
+- An **environment variable** is a named value supplied to a program when it
+  starts. Python reads them through `os.environ`; Node.js reads them through
+  `process.env`. `ANTHROPIC_API_KEY` holds the secret. `LLM_MODEL` is a
+  separate, non-secret setting that selects a model.
+- In Python, `os.environ.get("LLM_MODEL", "claude-sonnet-5")` means: use the
+  environment's `LLM_MODEL` value when it is set; otherwise use
+  `claude-sonnet-5`. In TypeScript, `process.env.LLM_MODEL ?? "claude-sonnet-5"`
+  does the same when the left side is missing or null. A model ID must be one
+  supported by the provider; check the [current Anthropic model list](https://platform.claude.com/docs/en/models/overview)
+  before making a live request because available IDs can change.
+- A **`.env` file** is a local plain-text way to hold environment variables.
+  Add `.env` to `.gitignore` so Git does not include it in commits or pushes.
+  `.gitignore` does not encrypt the file or remove it from the computer.
+- Python's standard library includes `os`, so `import os` needs no install.
+  The `anthropic` package is an external Python SDK and must be installed in
+  the same Python environment before `import anthropic` works, for example
+  with `pip install anthropic`. Installing the package does not create or set
+  an API key; those are separate steps. The Python sample reads environment
+  variables but does not load a `.env` file on its own.
+- An **SDK** (software development kit) is a provider's helper library. The
+  Python SDK's `anthropic.Anthropic()` client reads `ANTHROPIC_API_KEY` from
+  the environment by default and handles request formatting and sending. Its
+  response is a Python object, for example `response.content[0].text`.
+  The lesson's TypeScript SDK example similarly uses
+  `@anthropic-ai/sdk`; that package must be installed before importing it.
+
+#### SDK requests and raw HTTP
+
+- The SDK and raw HTTP send the same basic information. The SDK packages it
+  for you; raw HTTP makes those steps visible so you can debug them yourself.
+- In the raw Python example, `json.dumps(...)` turns a Python dictionary into
+  JSON text, and `.encode()` turns the text into bytes for the HTTP request.
+  `urllib.request.Request(...)` builds the request; `urlopen(...)` sends it;
+  `json.loads(resp.read())` parses the JSON reply back into Python data.
+- The request body has a `model`, `max_tokens`, and `messages` field.
+  `model` selects the model. `max_tokens` caps how many output tokens the
+  model may produce. A `messages` list describes who said what; in this
+  example it contains the user's prompt.
+- The SDK returns an object, so the example reads fields as attributes, such
+  as `response.content[0].text` and `response.usage.input_tokens`. Raw HTTP
+  returns JSON, which the example reads with dictionary keys such as
+  `result["content"][0]["text"]` and `result["usage"]["output_tokens"]`.
+- The course's raw HTTP example uses `x-api-key` for Anthropic authentication.
+  Current Anthropic docs show `Authorization: Bearer <key>` and say the older
+  `x-api-key` header is still supported. The SDK chooses the authentication
+  details automatically. See [Anthropic authentication](https://platform.claude.com/docs/en/manage-claude/authentication).
+- The `anthropic-version` header selects the API's request/response contract;
+  it is different from the `model` field, which selects the AI model. The SDK
+  supplies the API-version header for you.
+- The lesson's TypeScript implementation uses Node's built-in `fetch` and a
+  small `.env` loader rather than the Anthropic SDK. Its `MOCK=1` mode returns
+  a sample response locally and does not send a network request. Running that
+  mock returned the sample answer with 12 input tokens and 28 output tokens.
+
+#### Tokens, streaming, and errors
+
+- An **API token** in language-model usage is a small text unit, not always a
+  whole word. Input and output token counts are reported separately. Providers
+  may use those counts for billing and rate limits; a real request can use
+  account quota or incur charges.
+- **Streaming** sends parts of the response as the model generates them,
+  rather than making the program wait for the complete response. The pieces
+  are not necessarily whole words.
+- A **rate limit** caps how many requests or tokens can be used in a period.
+  Exceeding it commonly returns HTTP `429` (Too Many Requests). Wait before
+  retrying; repeated immediate retries make the problem worse. A server may
+  include a `retry-after` header saying how long to wait.
+- Common status-code meanings: `400` means the request is malformed or has
+  invalid fields; `401` means the key is missing or invalid; `403` means the
+  key lacks permission; `429` means a rate or usage limit was reached; and
+  `5xx` means a server-side problem. Fix a bad request or credential before
+  retrying; for temporary rate or server errors, wait and retry with a delay.
+- The shipped `prompt-api-troubleshooter` artifact is a small guide for
+  diagnosing these common API errors.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -203,3 +306,5 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 2, Git & Collaboration: **2/2 pre, 3/3 post (5/5 total)**.
 - Lesson 3, GPU Setup & Cloud: **2/3 post**. Ran the benchmark on a Colab
   Tesla T4 and measured 7.6x speedup on the first run and 21.0x on the second.
+- Lesson 4, APIs & Keys: **3/3 post**. Correctly identified `.env`/`.gitignore`
+  key storage, the lesson's `x-api-key` header, and waiting after a `429` rate limit.
