@@ -496,6 +496,58 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   through mounts, so rebuilding the image does not require copying those
   files into every image layer.
 
+### Lesson 8: Editor Setup
+
+- A **code editor** is where you read and change source code. Extensions add
+  features for particular tasks, such as Python support, notebooks, code
+  formatting, error checking, Git history, or connecting to another computer.
+  VS Code is one example; Cursor and Windsurf use many of the same settings
+  and extensions. The lesson also describes a way to add Python features to
+  Neovim.
+- A **language server** is a helper program that analyzes code and answers
+  questions from an editor, such as “what does this name refer to?” It can
+  provide completions, type information, and warnings about likely mistakes.
+  The **Language Server Protocol (LSP)** is the shared set of rules that lets
+  different editors and language servers communicate. This lets an editor
+  offer language features without implementing all Python analysis itself.
+- **Pylance** is a Python language server extension for VS Code. It can show
+  completions and inferred types, and its type checking can flag some
+  incorrect argument types or other likely problems while editing. These
+  warnings help find issues early but do not prove that code is free of bugs.
+- An `extensions.json` file can list recommended VS Code extensions for a
+  project, such as Python, Pylance, Jupyter, a formatter, Ruff, GitLens, and
+  Remote SSH. VS Code can offer to install recommendations when the project
+  opens. These are suggestions to adapt, not a requirement to install every
+  extension.
+- VS Code settings are stored as JSON key/value pairs. For example,
+  `"python.analysis.typeCheckingMode": "basic"` enables basic Python type
+  checking; `"editor.formatOnSave": true` runs a configured formatter when
+  saving; and `"editor.rulers": [88, 120]` shows visual line-length guides.
+  Rulers are guides, not enforced limits.
+- A **formatter** rewrites code into a consistent layout. With
+  `editor.formatOnSave` enabled and a Python formatter such as Black selected,
+  saving a file applies that formatting automatically. Ruff can also check
+  code for common problems and can be configured to run on save.
+- Notebook setting `notebook.output.scrolling: true` keeps long cell output,
+  such as thousands of training progress lines, in a scrollable area instead
+  of letting it expand the notebook page indefinitely. Auto-save can help
+  avoid running a stale file after forgetting to save edits.
+- VS Code's **integrated terminal** is a command-line shell inside the editor.
+  It can run Python scripts, install packages, or monitor a GPU, keeping the
+  editor and development commands in one window. The integrated terminal is
+  still a shell, so Python statements belong in a Python file or notebook,
+  not directly at a shell prompt.
+- **Remote SSH** connects VS Code to a remote computer. The editor window is
+  local, while project files and commands can be on the remote machine. It is
+  useful when a GPU server is elsewhere. It differs from Google Colab: Colab
+  provides a hosted notebook runtime, while Remote SSH connects an editor to
+  a computer over SSH. The learner currently uses Colab and does not need to
+  set up Remote SSH for those notebook lessons.
+- A productive editor workflow can combine code completions and warnings,
+  automatic formatting on save, notebooks for experiments, an integrated
+  terminal for commands, and Git tools for reviewing changes. Editor tools
+  support the work but do not replace understanding or running the code.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -530,3 +582,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 7, Docker for AI: **2/2 pre, 3/3 post (5/5 total)**. Correctly
   distinguished Docker images from containers and explained persistent
   volumes, host-provided GPU access, and Compose networking by service name.
+- Lesson 8, Editor Setup: **2/2 pre, 3/3 post (5/5 total)**. Explained
+  language-server help, notebook output scrolling, and the difference between
+  Colab's hosted runtime and Remote SSH to a remote computer.
