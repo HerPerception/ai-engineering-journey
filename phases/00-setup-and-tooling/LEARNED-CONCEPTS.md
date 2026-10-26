@@ -682,6 +682,84 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   to a log, filter that log with `grep`, monitor GPU activity with
   `nvidia-smi`, and use SSH/rsync to work with a remote machine and its files.
 
+### Lesson 11: Linux for AI
+
+- Linux organizes its files beneath one starting point called the **root
+  directory**, written `/`. A path begins at that starting point, such as
+  `/home/sam/project`. The **home directory** contains a user's files and is
+  usually `/home/username`; `~` is its shortcut. Other common locations:
+  `/tmp` holds temporary files and may be cleared on reboot; `/usr` contains
+  installed programs and libraries; `/etc` holds system configuration;
+  `/var/log` contains system logs; `/mnt` and `/media` are common mount
+  points; `/proc` and `/sys` expose system and hardware information.
+- Linux file commands: `pwd` shows the current directory; `ls -la` lists
+  files, including hidden files; `cd` changes directory; `mkdir -p a/b/c`
+  creates nested directories; `touch name` creates an empty file; `cp` copies;
+  `mv` moves or renames; and `rm` deletes. `rm -rf folder/` permanently
+  deletes that folder and its contents without a trash/recycle bin, so verify
+  the path before running it.
+- To read files, `cat` prints all contents, `head -20` prints the first 20
+  lines, `tail -20` prints the last 20, `less` opens a scrollable view (press
+  `q` to quit), and `tail -f log.txt` follows new lines as a log grows (stop
+  with Ctrl+C). `grep` searches for matching text; `find . -name "*.py"`
+  searches under the current directory for Python files.
+- Linux files have an **owner** and permission bits for the owner, their
+  group, and other users. `r` means read, `w` means write, and `x` means
+  execute/run. `chmod +x train.sh` adds execute permission so it can be run
+  as `./train.sh`. `chown user:group file` changes ownership and usually
+  requires administrator permission. A “Permission denied” message can come
+  from permissions, but check the file/path and the specific operation before
+  changing permissions or using administrator access.
+- Ubuntu uses **apt** to install system-level packages, such as `htop`,
+  `tmux`, or build tools. Python packages such as NumPy are usually installed
+  with pip/uv inside a Python environment. `sudo` temporarily runs one
+  command with administrator (root) privileges. For example,
+  `sudo apt update` refreshes Ubuntu's package list, then
+  `sudo apt install -y htop` installs htop. Use `sudo` only for operations
+  that need it; ordinary training scripts should generally run as your normal
+  user.
+- `whoami` prints the current user. A **process** is a running program;
+  `ps aux` lists processes, `htop` gives an interactive process view, and
+  `kill PID` asks the process with that ID to stop. `kill -9 PID` forces it to
+  stop and should be a last resort. `nvidia-smi` reports NVIDIA GPU status.
+  **systemd** manages background services, such as a server that should keep
+  running. `systemctl status service` checks one; `start`, `stop`, and
+  `restart` control it, and `enable` configures it to start at boot.
+- Disk commands answer different questions: `df -h` shows free/used space on
+  mounted disks, while `du -sh folder` shows the size of one folder.
+  `du -h --max-depth=1 / | sort -hr | head -20` helps find large directories
+  near the top of the filesystem. Models, datasets, and caches can fill a GPU
+  server's disk. `pip cache purge` clears pip's download cache;
+  `sudo apt clean` clears downloaded apt package files. Delete checkpoints
+  only when you are sure they are no longer needed.
+- `wget` and `curl` can download files or make web requests from a terminal.
+  `scp` copies files between machines; `rsync -avz --progress` synchronizes
+  files and directories, often sending only changes and resuming more
+  conveniently after a connection interruption.
+- **tmux** can keep a terminal session available after disconnecting from an
+  SSH session. Start with `tmux new -s train`, detach with Ctrl+B then D,
+  list sessions with `tmux ls`, and return with `tmux attach -t train`.
+  Inside tmux, Ctrl+B then `%` or `"` splits panes; Ctrl+B then an arrow
+  changes panes. The remote computer must remain on; tmux cannot keep work
+  running if the machine is shut down.
+- Linux and macOS use many similar commands but differ in some details.
+  Ubuntu commonly uses `apt` while macOS commonly uses Homebrew (`brew`).
+  macOS often uses zsh and `~/.zshrc`; Linux servers commonly use Bash and
+  `~/.bashrc`. macOS's BSD `sed -i` expects an empty string after `-i`, as in
+  `sed -i '' 's/a/b/' file`; GNU/Linux `sed -i` does not. Linux filenames
+  are usually case-sensitive (`Model.py` and `model.py` are distinct). A
+  remote server may have no graphical desktop, so commands such as `open`
+  may not work there; read files with `less` or `cat` instead.
+- **WSL2** gives Windows users a Linux environment without replacing Windows.
+  From WSL, Windows files are generally available beneath `/mnt/c/Users/...`.
+  The lesson notes that NVIDIA GPU access in WSL uses the Windows-side
+  NVIDIA driver. Windows text files can use CRLF line endings, while Linux
+  scripts expect LF; `dos2unix` can convert a script if those line endings
+  cause problems.
+- In Colab, notebook code runs on a hosted Linux runtime. Prefix a shell
+  command with `!`, such as `!pwd` or `!df -h`, to run it from a notebook
+  cell. Its filesystem and installed system packages belong to that runtime.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -726,3 +804,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 10, Terminal and Shell: **2/2 pre, 3/3 post (5/5 total)**. Correctly
   described the terminal/shell distinction, pipe and redirection behavior,
   tmux detach/reattach, SSH file copying, and Colab's `!` shell prefix.
+- Lesson 11, Linux for AI: **2/2 pre, 3/3 post (5/5 total)**. Correctly
+  identified the home directory, execute permission, disk-usage command,
+  and macOS/Linux `sed -i` difference.
