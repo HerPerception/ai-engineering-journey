@@ -615,6 +615,73 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   repeatable train/validation/test groups, save or convert them when useful,
   and keep large files managed outside ordinary Git history.
 
+### Lesson 10: Terminal and Shell
+
+- A **terminal** is the window for entering text commands. A **shell** is the
+  program running inside that window that reads commands and asks the
+  computer to perform them. Bash and zsh are common shells. The command-line
+  examples here are for a Unix-like shell; a Windows shell may use different
+  commands.
+- `pwd` prints the current folder. `ls -la` lists its files, including hidden
+  files. `cd path` changes the current folder, `~` means the user's home
+  folder, and `..` means the parent (one level up) folder. Ctrl+R searches
+  command history, Ctrl+C interrupts a running command, and Ctrl+L clears
+  the terminal display.
+- `grep` searches text for matching lines. In `grep "ERROR" train.log`, it
+  prints lines containing `ERROR`. `tail -3` shows the last three lines of
+  input. A **pipe** (`|`) sends one command's normal output into the next
+  command as its input, so `grep "loss" train.log | tail -3` finds loss lines
+  and then displays only the last three.
+- Programs commonly write normal output to **stdout** and error messages to
+  **stderr**. `>` sends stdout to a file and replaces that file's old content;
+  `>>` sends stdout to the end of the file without replacing old content.
+  `2>` sends stderr to a file. In
+  `python train.py > train_full.log 2>&1`, stdout goes to `train_full.log`
+  and `2>&1` sends stderr to the same destination. This records normal output
+  and errors together.
+- A long-running command can be placed in the background with `&`, but it
+  usually stops if its terminal closes. `nohup command > run.log 2>&1 &`
+  helps a process survive terminal closure and records its output, but gives
+  no way to return to its live terminal session. **tmux** creates a terminal
+  session that can be detached from and reattached to later, with live output
+  and multiple panes. `tmux new -s training` creates a named session;
+  Ctrl+B then D detaches; `tmux attach -t training` reattaches. tmux does not
+  protect a process from the computer or hosted runtime shutting down. It is
+  useful on a remote server that stays running; it cannot prevent Colab from
+  ending its runtime.
+- A **process** is a running program. A **PID** (process ID) is its unique
+  number, used by system tools to inspect or signal that process. `jobs`
+  lists jobs started from the current shell; `ps` lists processes. `kill` or
+  other process-ending commands can stop work, so confirm which process will
+  be affected before using them.
+- `htop` displays computer processes and CPU/memory use. `nvidia-smi` reports
+  NVIDIA GPU and driver status; `watch -n1 nvidia-smi` repeats that command
+  once per second. `nvtop` shows GPU activity interactively. These show
+  system/GPU status; checking whether PyTorch can use CUDA still requires
+  `torch.cuda.is_available()` in the relevant Python environment.
+- **SSH** (Secure Shell) securely connects to another computer so commands
+  can run there. `ssh user@gpu-box` opens a remote shell. `scp` copies files,
+  while `rsync` synchronizes files or directories and can avoid copying
+  unchanged files. For example, `scp model.pt user@gpu-box:~/models/` copies
+  one model file to a remote folder.
+- SSH **port forwarding** securely connects a local port to a service port on
+  the remote computer. `ssh -L 8888:localhost:8888 user@gpu-box` makes a
+  remote service listening on port 8888 available through `localhost:8888`
+  on the local machine, such as a remote Jupyter server. `localhost` refers
+  to the computer at the end of that connection (here, the remote server).
+- A shell **alias** is a short nickname for a command, such as `gpu` for
+  `nvidia-smi`. Aliases can also run commands that change or stop things; for
+  example, the lesson's `killtraining` alias stops matching Python training
+  processes, so understand a shortcut before using it. Shell setup files
+  such as `.bashrc` and `.zshrc` can load aliases when a shell starts.
+- In a Colab notebook code cell, prefix a shell command with `!`, for example
+  `!nvidia-smi`. This runs a shell command in the hosted runtime. The lesson's
+  tmux and SSH patterns mainly apply when using a persistent computer or
+  remote GPU server; a Colab runtime can still be shut down independently.
+- A common AI terminal workflow is to run a training program, save its output
+  to a log, filter that log with `grep`, monitor GPU activity with
+  `nvidia-smi`, and use SSH/rsync to work with a remote machine and its files.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -656,3 +723,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   the new topic with a small movie-review example; correctly identified
   streaming, Parquet, CSV, and `.gitignore` uses. Needed a plain example of
   “inspect,” now recorded above.
+- Lesson 10, Terminal and Shell: **2/2 pre, 3/3 post (5/5 total)**. Correctly
+  described the terminal/shell distinction, pipe and redirection behavior,
+  tmux detach/reattach, SSH file copying, and Colab's `!` shell prefix.
