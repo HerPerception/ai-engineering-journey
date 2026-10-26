@@ -760,6 +760,110 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   command with `!`, such as `!pwd` or `!df -h`, to run it from a notebook
   cell. Its filesystem and installed system packages belong to that runtime.
 
+### Lesson 12: Debugging and Profiling
+
+- **Debugging** means finding the cause of a program problem and correcting
+  it. AI bugs can be silent: training may finish without a Python error while
+  the model learns nothing useful or reports a misleading result.
+  **Profiling** means measuring time and memory use to find which parts of a
+  program are expensive. A **bottleneck** is the part that limits overall
+  speed or resource use.
+- Check behavior at layers: ordinary Python steps; values flowing through
+  model operations; and training behavior such as loss, gradients, and
+  validation results. `print` debugging can be useful: inspect a tensor's
+  **shape** (its dimensions), **dtype** (kind/precision of its values),
+  **device** (CPU, CUDA GPU, or other supported device), minimum, maximum,
+  average, and whether it contains NaN. The lesson's `debug_print` function
+  reports these details for a tensor.
+- **NaN** means “not a number,” an invalid numeric result. It can spread
+  through later calculations without immediately stopping the program.
+  **Infinity** (`Inf`) is another non-finite value to detect. `torch.isnan(x)`
+  checks for NaN values; `torch.isinf(x)` checks for infinity. For a scalar
+  loss, a check such as `torch.isnan(loss)` can identify the step where
+  training became invalid.
+- A **breakpoint** pauses execution so you can examine program values at
+  that point. Python's `breakpoint()` opens its debugger. In the debugger,
+  `p outputs.shape` prints a value; `c` continues; `q` quits. A conditional
+  breakpoint such as `if loss.item() > 100 or torch.isnan(loss):
+  breakpoint()` pauses only when the loss looks suspicious, rather than at
+  every step. `loss.item()` converts a scalar tensor to a regular Python
+  number for inspection.
+- **Logging** records messages with timestamps and severity labels such as
+  INFO, WARNING, and ERROR, often to both the terminal and a file. It is more
+  useful than transient print output for a long run or a failure discovered
+  later. Log important settings (such as learning rate and batch size), loss,
+  and warnings with the training step.
+- A **timer** measures how long a section takes. `time.perf_counter()` is a
+  precise stopwatch; save its value before and after a section and subtract
+  to get elapsed time. Time data loading, the model's forward pass, and the
+  backward pass separately. Do not assume the GPU calculation is the
+  bottleneck: data loading may take most of the time. If it does, inspect the
+  data pipeline and consider DataLoader workers (`num_workers > 0`) so loading
+  can happen alongside model work; more workers are not automatically
+  faster on every system.
+- **cProfile** measures Python function-call time. For example,
+  `python -m cProfile -s cumtime train.py` runs a script under the profiler
+  and sorts results by cumulative time (time in a function and calls it
+  makes). **line_profiler** can show time by line inside selected functions.
+  Profilers show where to investigate; they do not decide what behavior is
+  correct or automatically make code faster.
+- **Memory profiling** finds where memory is used. Python's `tracemalloc`
+  can show Python CPU-memory allocations by source line; `memory_profiler`
+  is another line-oriented CPU-memory tool. These do not report all GPU
+  tensor memory. PyTorch's `torch.cuda.memory_allocated()` reports GPU memory
+  occupied by active tensors, while `torch.cuda.memory_reserved()` reports
+  memory held by PyTorch's caching allocator for reuse.
+- A GPU **out-of-memory (OOM)** error means the requested work does not fit
+  in available GPU memory. Reducing **batch size** (number of examples
+  processed together) is often a first step. `del tensor` can release a
+  tensor that is no longer needed. `torch.cuda.empty_cache()` releases
+  unused cached blocks, but cannot free tensors still in use. Mixed
+  precision stores some calculations with fewer bits to reduce memory use;
+  gradient checkpointing reduces saved training data at the cost of doing
+  some calculations again.
+- **Shape mismatch** means a tensor's dimensions do not match what an
+  operation or model expects. For example, a model expecting image data in
+  `[batch, channels, height, width]` form may reject a differently arranged
+  tensor. Print the input and output shapes, or use forward hooks to show
+  each model layer's input and output shapes.
+- A **device mismatch** occurs when model parameters and input tensors are
+  placed on different devices, such as model weights on GPU and an input on
+  CPU. Compare `.device` for the model and every input tensor; move them to
+  compatible devices before the operation.
+- A **gradient** is the signal calculated during training that indicates how
+  model parameters should change to reduce the loss. Check gradients for NaN
+  or infinity when loss becomes invalid. Extremely large gradients can
+  destabilize training; zero gradients can indicate that learning signals
+  are not flowing. The lesson's gradient health check reports their sizes and
+  warns about very large or zero values.
+- Common NaN causes include too-high learning rate, division by zero, taking
+  the logarithm of zero or a negative value, and exploding gradients. Find
+  where the invalid value first appears and inspect related inputs,
+  calculations, and gradients before changing settings blindly.
+- **Data leakage** occurs when information the model should not have during
+  evaluation becomes available to it, such as test examples overlapping the
+  training data or target answers appearing in input features. This can make
+  a test score misleadingly high. A surprising 99% test accuracy on a first
+  run is a reason to check the split and features.
+- **Overfitting** means the model learns the training examples too
+  specifically and performs worse on new examples. Compare training and
+  validation loss: if training loss keeps decreasing but validation loss
+  rises, the model may be overfitting. Validation loss helps with development
+  choices; preserve test data for the final evaluation.
+- **TensorBoard** displays logged training information as charts. PyTorch's
+  `SummaryWriter` can record scalar values such as training and validation
+  loss against a step or epoch. Comparing their curves makes trends such as
+  overfitting easier to spot.
+- A useful debugging order: check sample shapes before a large run; inspect
+  values, dtype, device, NaNs, and gradients during early steps; log loss and
+  validation results; use a breakpoint at a failure; time data loading and
+  model sections to find slow work; profile memory if approaching OOM.
+- The shipped `debug_tools.py` demonstrates tensor summaries, timers, Python
+  memory snapshots, shape hooks, NaN/device/gradient checks, GPU memory,
+  logging, and conditional breakpoints. The `prompt-debug-ai-code` artifact
+  is a guided diagnostic prompt that first classifies common AI issues and
+  asks for evidence relevant to the reported problem.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -807,3 +911,6 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 11, Linux for AI: **2/2 pre, 3/3 post (5/5 total)**. Correctly
   identified the home directory, execute permission, disk-usage command,
   and macOS/Linux `sed -i` difference.
+- Lesson 12, Debugging and Profiling: **2/2 pre, 3/3 post (5/5 total)**.
+  Recognized data leakage behind suspicious test accuracy, data loading as a
+  possible bottleneck, and gradient/NaN inspection with a breakpoint.
