@@ -548,6 +548,73 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   terminal for commands, and Git tools for reviewing changes. Editor tools
   support the work but do not replace understanding or running the code.
 
+### Lesson 9: Data Management
+
+- A **dataset** is a collection of examples used by a program. For movie
+  reviews, one example (often one row) might contain the review text and a
+  label such as positive or negative. A **column** is one kind of information
+  recorded for each example, such as text or label. To **inspect** a dataset
+  is to look at basic details such as its column names and first example.
+- The **Hugging Face Hub** is a place where people share datasets and models.
+  The Python `datasets` library can retrieve datasets from it. For example,
+  `from datasets import load_dataset` imports the library's `load_dataset`
+  function; it is not part of Python's built-in functions. Calling it with a
+  dataset name loads the requested data. `reviews[0]` selects the first
+  example from the `reviews` dataset.
+- A **cache** is a local saved copy of data already downloaded. The Hugging
+  Face library can use the cache on a later load rather than downloading the
+  same data again. Its default dataset cache is under
+  `~/.cache/huggingface/datasets/`. Colab's local runtime storage is temporary,
+  so the cache may disappear when the runtime is reset.
+- **Streaming** asks the dataset library for examples as they are needed
+  instead of downloading the complete dataset first. This is useful when a
+  dataset is very large. The stream can be read one example at a time; code
+  that saves every received example into its own list can still use growing
+  memory, so streaming alone does not prevent that.
+- Data **formats** are different ways to save the same information. **CSV**
+  is readable table text and is convenient for people and spreadsheets.
+  **JSON** is text that can represent nested information and is common for
+  exchanging data between programs. **Parquet** is a compact binary format
+  that stores data by column and is useful for large datasets and efficient
+  column reads. **Apache Arrow** is a column-based format for working with
+  data in memory; Hugging Face `datasets` uses it internally. Methods such as
+  `to_csv`, `to_json`, and `to_parquet` save a dataset in those formats.
+- Machine-learning data is commonly divided into three **splits**, each with
+  a different job. **Training data** is used to teach the model. **Validation
+  data** is checked during development to help decide how to improve or
+  configure the model. **Test data** is held back until the final evaluation
+  so the result estimates performance on examples not used during
+  development. The names describe the intended use of each group.
+- A random **seed** is a number used to make a random shuffle repeatable. If
+  the same dataset and seed are used again, the data split can be reproduced,
+  making experiment comparisons fairer. In the sample split helper, a seed of
+  `42` is used for that purpose.
+- The helper's `make_splits` function defaults to 80% training, 10%
+  validation, and 10% test data. A detail in the lesson's separate IMDB code
+  example: it loads only the original `train` split, sets aside 20% as test,
+  then takes validation from the remaining 80%. That produces 70% train,
+  10% validation, and 20% test of the loaded data, not 80/10/10. If a dataset
+  already provides an official test split, keep it for the final test and
+  create validation data from the training portion.
+- Large datasets and model weights usually should not be committed directly
+  into ordinary Git history. **`.gitignore`** tells Git to leave specified
+  files out; it is simplest for personal or re-downloadable data, but does
+  not store or version the data. **Git LFS** tracks large files through small
+  pointers in Git while storing file contents separately. **DVC** puts small
+  data-version pointer files in Git and stores the actual data in a remote
+  location such as S3 or GCS, helping teams reproduce experiments with the
+  same data version.
+- The lesson's `data_utils.py` helper groups useful steps into functions:
+  load and inspect a dataset, stream a few examples, convert formats and
+  compare file sizes, make reproducible splits, download a model file,
+  summarize the local dataset cache, and reload saved CSV/JSON/Parquet data.
+  Its `fingerprint` function computes a SHA-256 digest from a sample of rows;
+  this gives a compact way to notice changes in that sample, but it is not a
+  guarantee that the entire dataset is identical.
+- Main workflow: find data, load or stream examples, inspect them, make
+  repeatable train/validation/test groups, save or convert them when useful,
+  and keep large files managed outside ordinary Git history.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -585,3 +652,7 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 8, Editor Setup: **2/2 pre, 3/3 post (5/5 total)**. Explained
   language-server help, notebook output scrolling, and the difference between
   Colab's hosted runtime and Remote SSH to a remote computer.
+- Lesson 9, Data Management: **2/2 pre, 3/3 post (5/5 total)**. Worked through
+  the new topic with a small movie-review example; correctly identified
+  streaming, Parquet, CSV, and `.gitignore` uses. Needed a plain example of
+  “inspect,” now recorded above.
