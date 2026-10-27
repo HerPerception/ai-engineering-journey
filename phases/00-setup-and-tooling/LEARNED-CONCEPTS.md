@@ -570,7 +570,12 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   instead of downloading the complete dataset first. This is useful when a
   dataset is very large. The stream can be read one example at a time; code
   that saves every received example into its own list can still use growing
-  memory, so streaming alone does not prevent that.
+  memory, so streaming alone does not prevent that. A Python generator object
+  is consumed as it is read and cannot be replayed after it is exhausted.
+  Some dataset streaming objects are reusable and can create a fresh iterator
+  for another pass. Check whether you are holding a one-use iterator or a
+  reusable iterable; do not assume every streaming dataset behaves like a
+  one-use generator.
 - Data **formats** are different ways to save the same information. **CSV**
   is readable table text and is convenient for people and spreadsheets.
   **JSON** is text that can represent nested information and is common for
@@ -1038,6 +1043,11 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
     distinction was reviewed after the quiz answer.
 
 ## Quiz results
+
+- Phase 0 challenge review: **7/7 scorable questions correct**. A streaming
+  dataset question was excluded because it did not distinguish a consumed
+  Python generator from a reusable dataset object that can create a fresh
+  iterator. Review the distinction in the Lesson 9 streaming notes above.
 
 - Lesson 1, Dev Environment: **2/2 pre, 2/3 post (4/5 total)**. Revisit the PyTorch GPU access check.
 - Lesson 2, Git & Collaboration: **2/2 pre, 3/3 post (5/5 total)**.
