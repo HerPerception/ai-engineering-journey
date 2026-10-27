@@ -15,7 +15,7 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 ## Path
 | Phase | Name | Status | Est. hours |
 |-------|------|--------|------------|
-| 0 | Setup & Tooling | Do | 16 |
+| 0 | Setup & Tooling | Done | 16 |
 | 1 | Math Foundations | Do | 23 |
 | 2 | ML Fundamentals | Do | 26 |
 | 3 | Deep Learning Core | Do | 15 |
