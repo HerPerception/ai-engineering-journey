@@ -864,6 +864,162 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
   is a guided diagnostic prompt that first classifies common AI issues and
   asks for evidence relevant to the reported problem.
 
+### Lesson 13: Python for AI Engineering
+
+- In Python, a **variable name refers to an object**. Assigning `backup =
+  weights` does not copy a list: both names refer to the same list, so a
+  change through either name appears through both. Use `weights.copy()` or
+  `list(weights)` when a separate list is needed. This also explains why
+  `[[0] * 3] * 2` creates two references to the same inner list; use
+  `[[0] * 3 for _ in range(2)]` to make independent rows.
+- Common collections: a **list** is ordered and changeable; a **tuple** is
+  ordered and usually used for fixed values such as a shape; a **dict** maps
+  keys to values, such as configuration names to settings; a **set** keeps
+  unique values. Repeated values added to a set appear once.
+- **Unpacking** assigns collection items to named variables, as in
+  `batch_size, n_features = (32, 784)`. A starred target such as
+  `first, *middle, last = values` receives the remaining items. Tuple
+  assignment such as `x, y = y, x` swaps two names. An **f-string** inserts
+  expression values into text, such as `f"loss={loss:.3f}"`; a colon can
+  format the displayed number.
+- A **slice** selects part of a sequence: `items[start:stop:step]` includes
+  `start` and stops before `stop`; negative indexes count from the end. A
+  list slice makes a new list of selected references, which can use memory
+  for a large list.
+- A **comprehension** builds a collection from an iterable. For example,
+  `[score for score in scores if score > 0.6]` filters, and
+  `[1 if score >= 0.5 else 0 for score in scores]` transforms each item.
+  Dict and set comprehensions do the same for dictionaries and sets. A
+  generator expression uses parentheses, such as
+  `sum(score * score for score in scores)`, and can feed values to a function
+  one at a time without first building a list.
+- Avoid a mutable default argument such as `def add(item, bucket=[])`.
+  Python creates that list once when it defines the function, so later calls
+  can reuse earlier changes. Use `bucket=None` and create `bucket = []`
+  inside the function when it is `None`. `field(default_factory=list)` gives
+  each dataclass instance its own list. A `*` in a function's parameter list
+  makes later parameters keyword-only, so callers must name settings such as
+  `learning_rate=...` instead of accidentally swapping positional values.
+- A **lambda** is a short unnamed function, often used for a sorting key,
+  such as `sorted(rows, key=lambda row: row["score"], reverse=True)`. The key
+  function tells Python which value to compare. A **closure** is a function
+  that keeps values from the function that created it. The lesson's
+  standardizer closure keeps the training-set averages and spreads for
+  reuse on validation/test rows.
+- A **dataclass** defines a record with named fields. The `@dataclass`
+  decorator generates common methods such as initialization and readable
+  display. Type hints like `label: int` describe the intended value type but
+  Python does not normally enforce them at runtime. `frozen=True` prevents
+  changing an instance after construction. `field(default_factory=list)` is
+  the safe way to give each instance a separate mutable list.
+- An **iterable** is something a `for` loop can read, such as a list, file,
+  or generator. `iter(value)` obtains an **iterator**; `next(iterator)` asks
+  for its next item. When no items remain, it raises `StopIteration`, which
+  a `for` loop handles automatically. A generator function contains `yield`;
+  calling it returns a generator object, and each `next()` runs until the
+  next `yield` and pauses there.
+- A **generator** produces values on demand and can save memory compared with
+  building a full list. It is usually one-use: after one full pass, a second
+  pass produces no items. Training loops need a fresh generator for every
+  epoch. A list comprehension creates all its results at once; a generator
+  expression creates them one at a time. If a generator is intended to be
+  reused, create it again from a reusable source rather than replaying the
+  consumed object.
+- A **context manager** used with `with` performs setup and then cleanup.
+  `with open(path, encoding="utf-8") as file:` closes the file when the
+  block ends, even if an error occurs. `try`/`except` handles expected
+  errors; catch a specific error such as `ValueError`, and raise a clear
+  message for invalid input. Avoid bare `except`, which can accidentally
+  hide unexpected errors or prevent Ctrl+C from stopping a program.
+- **Type hints** describe function inputs and outputs for readers and tools;
+  a type checker can examine them before execution, but Python normally does
+  not validate them at runtime. A `.py` file is a module. The guard
+  `if __name__ == "__main__": main()` runs the demo when the file is run
+  directly but avoids running that demo when another file imports its
+  functions and classes.
+- Python's `csv` module reads CSV fields as strings, so convert numeric
+  fields explicitly with `int(...)` or `float(...)`. Open CSV with
+  `newline=""` and `encoding="utf-8"`. The `json` module reads/writes JSON,
+  preserving number values as numbers. `pathlib.Path` provides convenient
+  path operations and text read/write methods. Use `with` for opened files.
+- `sorted`, `min`, and `max` accept `key=` to choose the value used for
+  comparison. `reverse=True` reverses the ordering. Python sorting is stable:
+  items with equal keys preserve their earlier order. A tuple key can sort by
+  one value and use another to break ties.
+- Useful standard-library helpers: `Counter` counts labels or tokens;
+  `defaultdict(list)` groups values without first checking whether a key
+  exists; `enumerate` returns an index along with each item; and
+  `deque(maxlen=3)` keeps only the three most recent values. `itertools`
+  provides `product` for combinations, `chain` to join iterables, and
+  `islice` to take a limited number of values from an iterator.
+- The lesson's `Record` loader reads CSV or JSON rows into one consistent
+  form: a tuple of float features and an integer label. It checks that rows
+  have the expected fields and raises a clear error for missing/extra fields
+  or unsupported file types rather than silently using malformed data.
+- A **seed** makes a pseudo-random sequence repeatable. The split helper
+  uses `random.Random(seed)` to shuffle a list of row indexes, then selects
+  train and test records by those indexes. The same data and seed give the
+  same split, and the original records list is not shuffled or modified.
+  A private `random.Random` avoids changing Python's global random generator
+  used by other code.
+- A **mini-batch** is a small group of examples processed together. The
+  `batches` helper uses `islice` and `yield` to create each batch only when
+  requested. Ten examples with batch size four yield batches of sizes 4, 4,
+  and 2; `drop_last=True` omits the short final batch. The ordinary wrapper
+  validates the batch size immediately, before returning its inner
+  generator, and a new generator is created for each epoch.
+- The lesson implements a dot product, mean, and population standard
+  deviation using built-in Python tools. `zip(a, b, strict=True)` pairs
+  vectors and raises `ValueError` if their lengths differ; ordinary `zip`
+  would silently stop at the shorter one. The mean rejects empty input.
+  Population standard deviation divides by `n`; a sample estimate divides
+  by `n - 1` instead.
+- **Standardization** subtracts a feature's average and divides by its
+  standard deviation to put numeric columns on comparable scales. Calculate
+  these statistics on the training split only, then apply the same values to
+  validation and test data. This prevents **data leakage** from test data.
+  A constant column has zero spread, so the example uses a safe scale of 1
+  rather than dividing by zero.
+- The complete standard-library demo creates synthetic labeled records,
+  saves and reloads CSV/JSON, makes a reproducible split, fits a simple
+  nearest-centroid classifier in batches, and reports accuracy, timing, and
+  memory. A nearest-centroid classifier averages feature values for each
+  label and predicts the label whose average feature vector is closest.
+- `best_time` measures a function several times with `time.perf_counter`
+  and reports the fastest run, reducing interference from unrelated work.
+  `tracemalloc` measures Python memory allocations; lists and generators can
+  compute the same sum while using very different peak memory. The lesson's
+  sample machine measured a million-number pure-Python dot product at about
+  30 ms and NumPy at under 1 ms; actual timings depend on the computer and
+  operation.
+- A Python list holds references to Python objects. In 64-bit CPython,
+  references and float objects add memory overhead. A NumPy `float64` array
+  stores raw 8-byte numbers together. A Python loop performs interpreter and
+  object-handling work for each element; NumPy executes a compiled loop over
+  the array, often using CPU vector instructions. This is why NumPy can be
+  much faster for large numeric work, though a NumPy call can cost more than
+  a tiny Python loop for very small inputs.
+- **Vectorization** describes an operation over an entire array rather than
+  an explicit Python loop over each number. **Broadcasting** lets NumPy
+  combine compatible shapes by reusing a size-1 or missing dimension, often
+  without copying the repeated values. For example, column averages with
+  shape `(2,)` can be subtracted from a matrix of shape `(3, 2)`. When
+  reducing across rows and then combining the result with the original
+  matrix, `keepdims=True` retains a size-1 dimension so shapes remain
+  compatible.
+- The standard library has tested equivalents for some pieces:
+  `statistics.fmean` and `statistics.pstdev` for mean and population
+  standard deviation, `timeit.repeat` for repeated timing, and in Python
+  3.12+, `math.sumprod` and `itertools.batched`. The course uses Python 3.11,
+  so its own dot-product and batching functions remain useful. NumPy is the
+  array-library version for larger numeric workloads.
+- The shipped `prompt-python-review` artifact is a review checklist for AI
+  and data Python code. It checks for shared mutable values, consumed
+  generators, unseeded or global randomness, test-statistic leakage, unsafe
+  file parsing, silent truncation, slow numeric loops, and module code that
+  runs on import. Its report asks for specific findings, fixes, and a way to
+  verify the important correction.
+
 ## Questions initially missed or corrected
 
 ### Lesson 1: Dev Environment
@@ -914,3 +1070,7 @@ Model checkpoint files such as `.pt`, `.pth`, and `.safetensors` can be very lar
 - Lesson 12, Debugging and Profiling: **2/2 pre, 3/3 post (5/5 total)**.
   Recognized data leakage behind suspicious test accuracy, data loading as a
   possible bottleneck, and gradient/NaN inspection with a breakpoint.
+- Lesson 13, Python for AI Engineering: **2/2 pre, 3/3 post (5/5 total)**.
+  Worked through new Python idioms one at a time; correctly explained shared
+  list references, repeatable splits, batch sizing, generators, safe mutable
+  defaults, and why NumPy vectorization is faster for large arrays.
