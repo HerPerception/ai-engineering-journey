@@ -52,6 +52,8 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 | 2026-10-26 | 00/11 | 2/2 pre, 3/3 post (5/5 total) | Explained Linux paths and file commands, the execute permission, `sudo` and `apt`, the difference between `df` and `du`, and macOS/Linux command differences. |
 | 2026-10-26 | 00/12 | 2/2 pre, 3/3 post (5/5 total) | Explained how AI bugs can run silently, how to inspect tensors, profile slow steps, spot data leakage and overfitting, and investigate NaN loss. |
 | 2026-10-27 | 00/13 | 2/2 pre, 3/3 post (5/5 total) | Practiced core Python patterns for data and AI: safe list handling, dataclasses, generators, repeatable splits, batches, and NumPy vectorization. |
+| 2026-11-02 | 01/01 | 2/3 post (66.7%) | Built intuition for vectors, dot products, matrix transformations, projection, rank, and orthonormal vectors; review how LoRA represents a large weight update with two smaller matrices. |
 
 ## Review queue
 - Phase 0, Lessons 1 and 3: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`.
+- Phase 1, Lesson 1: Review LoRA. It represents a large weight update as the product of two smaller low-rank matrices, reducing the number of values trained.
