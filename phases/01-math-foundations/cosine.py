@@ -4,6 +4,7 @@ def square_root(vector: list) -> int:
         square_total += num ** 2
     return square_total ** 0.5
 
+
 def get_dot_product(vector1: list, vector2: list) ->  int:
     dot_product = 0
     for idx in range(len(vector1)):
