@@ -23,6 +23,13 @@ class Matrix:
             for i in range(self.rows)
         ])
 
+    def determinant(self):
+        if self.rows != 2 or self.cols != 2:
+            raise ValueError("This determinant method supports only 2x2 matrices")
+        return (
+            self.data[0][0] * self.data[1][1]
+            - self.data[0][1] * self.data[1][0]
+        )
 
     def inverse_2x2(self):
         det = self.determinant()
