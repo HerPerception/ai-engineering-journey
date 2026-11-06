@@ -44,6 +44,48 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   residual, rank 1 for a redundant 2-by-2 matrix, and Gram-Schmidt vectors with
   length 1 and pairwise dot products near zero (small floating-point rounding).
 
+### Lesson 2: Vectors, Matrices & Operations
+
+- A matrix is a table of numbers. Its **shape** is rows by columns; a 2-by-3
+  matrix has two horizontal rows and three vertical columns.
+- **Element-wise multiplication** multiplies values in matching positions.
+  The matrices need the same shape. **Matrix multiplication** instead takes a
+  row from the first matrix and a column from the second, multiplies their
+  matching values, and adds them to get one result value. For shapes
+  `(m by n) @ (n by p)`, the middle sizes must match and the result is
+  `(m by p)`. Example:
+  `[[1, 2], [3, 4]] @ [[5, 6], [7, 8]] = [[19, 22], [43, 50]]`.
+- Matrix addition and subtraction combine matching positions. Scalar
+  multiplication multiplies every entry by one number. A **transpose** turns
+  every old column into a new row; for example,
+  `[[1, 2, 3], [4, 5, 6]]` becomes `[[1, 4], [2, 5], [3, 6]]`.
+- The **determinant** is a number that tells whether a square matrix can be
+  undone. For `[[a, b], [c, d]]`, it is `a*d - b*c`. A zero determinant means
+  the transformation squashed information together, so there is no inverse.
+  A nonzero determinant allows an **inverse** matrix that undoes the original;
+  multiplying a matrix by its inverse gives the **identity matrix**, with ones
+  on the diagonal and zero elsewhere.
+- A neural network's dense layer first computes `W @ x`: each row of `W`
+  creates one output by mixing the input values. It adds a **bias**, an
+  adjustment value for each output, then applies **ReLU**, which replaces
+  negative results with zero. With `W` shaped 2-by-3 and `x` containing 3
+  values, the result has 2 values.
+- **Broadcasting** lets a smaller bias be added to each row of a larger output
+  table. For example, adding `[10, 20, 30]` to `[[1,2,3],[4,5,6]]` gives
+  `[[11,22,33],[14,25,36]]`: each bias entry is added to the matching position
+  in both rows.
+- NumPy writes these operations as `A * B` for element-wise multiplication,
+  `A @ B` for matrix multiplication, `.T` for transpose, and
+  `np.linalg.det(A)` / `np.linalg.inv(A)` for determinant and inverse.
+  `np.maximum(0, z)` applies ReLU. NumPy performs the inner arithmetic in
+  optimized code; the programmer still chooses the operation and supplies
+  compatible shapes.
+- Ran `phases/01-math-foundations/02-vectors-matrices-operations/code/matrices.py`.
+  The output showed element-wise multiplication `[[5,12],[21,32]]` differs from
+  matrix multiplication `[[19,22],[43,50]]`, and multiplying a matrix by its
+  inverse produced the identity. The neural-network example mapped a 3-value
+  input through a 4-value hidden layer to 2 outputs.
+
 ## Questions initially missed or corrected
 
 - **Question:** How does LoRA use linear algebra to make fine-tuning a large
@@ -54,8 +96,16 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   - **Simple explanation:** A 4096-by-4096 update has about 16.8 million
     values. Two rank-16 factors have about 131,000 values. LoRA trains this
     smaller update, assuming it can capture the useful change.
+- **Build correction:** Initially transposed `[[1, 2, 3], [4, 5, 6]]` as
+  `[[1, 2], [3, 4], [5, 6]]`. The correct result is
+  `[[1, 4], [2, 5], [3, 6]]`: each original column becomes a new row. A second
+  example was answered correctly as `[7, 9]`, the first row from the first
+  column of `[[7, 8], [9, 10]]`.
+- **Broadcasting check:** Correctly explained that each bias value is added
+  to the matching position in every row of the output table.
 
 ## Quiz results
 
 - Lesson 1, Linear Algebra Intuition: **2/3 post (66.7%)**. Review LoRA's
   low-rank update and how two smaller matrices represent a large weight change.
+- Lesson 2, Vectors, Matrices & Operations: **2/2 post (100%)**.
