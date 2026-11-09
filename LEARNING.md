@@ -54,7 +54,9 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 | 2026-10-27 | 00/13 | 2/2 pre, 3/3 post (5/5 total) | Practiced core Python patterns for data and AI: safe list handling, dataclasses, generators, repeatable splits, batches, and NumPy vectorization. |
 | 2026-11-02 | 01/01 | 2/3 post (66.7%) | Built intuition for vectors, dot products, matrix transformations, projection, rank, and orthonormal vectors; review how LoRA represents a large weight update with two smaller matrices. |
 | 2026-11-06 | 01/02 | 2/2 post (100%) | Distinguished element-wise from matrix multiplication, explained transpose, determinant and inverse, and described how bias broadcasting adds values at matching positions across rows. |
+| 2026-11-09 | 01/03 | 2/3 post (66.7%) | Applied rotation, scaling, shear and reflection; explained why transformation order matters; ran the NumPy comparison in `.venv`. Review how eigenvectors pair with eigenvalues in an eigendecomposition. |
 
 ## Review queue
 - Phase 0, Lessons 1 and 3: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`.
 - Phase 1, Lesson 1: Review LoRA. It represents a large weight update as the product of two smaller low-rank matrices, reducing the number of values trained.
+- Phase 1, Lesson 3: Review eigendecomposition. For `[[2,1],[1,2]]`, `[1,1]` pairs with eigenvalue 3 (stretched three times), and `[1,-1]` pairs with eigenvalue 1 (unchanged).

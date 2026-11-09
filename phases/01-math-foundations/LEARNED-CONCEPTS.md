@@ -86,6 +86,57 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   inverse produced the identity. The neural-network example mapped a 3-value
   input through a 4-value hidden layer to 2 outputs.
 
+### Lesson 3: Matrix Transformations
+
+- A **transformation** is a rule that moves points. A 2D point is written
+  `[x, y]`. A matrix can rotate, stretch, slant, or mirror every point in a
+  picture. The columns of a transformation matrix show where the basic right
+  and up directions move.
+- **Rotation** turns points around the origin while preserving lengths and
+  angles. In Python, `math.pi / 2` is a 90-degree angle; `sin` and `cos` supply
+  the matrix values. A 90-degree counterclockwise rotation maps `[1, 0]` to
+  `[0, 1]` and `[0, 1]` to `[-1, 0]`.
+- **Scaling** changes horizontal and vertical coordinates separately. Scaling
+  by `(2, 3)` maps `[1, 1]` to `[2, 3]`. **Shearing** slants a shape; an x-shear
+  moves x by `kx * y`, leaving y unchanged when `ky=0`. **Reflection** mirrors
+  across an axis; reflecting across the y-axis changes x's sign and keeps y.
+- **Composition** applies several transformations in sequence. For a point
+  `[1, 0]`, rotating 90 degrees then scaling by `(2, 0.5)` gives `[0, 0.5]`;
+  scaling first then rotating gives `[0, 2]`. In `S @ R @ point`, the rightmost
+  operation, `R`, acts first. Matrix multiplication order therefore matters.
+- A **3D rotation** turns points around an axis. A rotation around z spins the
+  x-y plane and keeps z fixed; around x it spins the y-z plane; around y it
+  spins the x-z plane. In the program, rotating `[1, 0, 0]` around x leaves it
+  where it is because the point lies on that axis.
+- The **determinant** measures area scaling in 2D (volume in 3D). A value of 1
+  preserves area, 6 multiplies it by six, -1 preserves area but flips
+  orientation, and 0 crushes the space into a lower dimension. The script
+  showed rotation and shear with determinant 1, scaling by `(2,3)` with 6,
+  reflection with -1, and a collapsed matrix with 0.
+- An **eigenvector** is a direction a matrix does not turn; it only stretches,
+  shrinks, or flips that direction. Its **eigenvalue** is the multiplier. For
+  `A = [[2,1],[1,2]]`, `[1,1]` becomes `[3,3]` (eigenvalue 3), while `[1,-1]`
+  stays unchanged (eigenvalue 1). Eigenvectors may be normalized to length 1;
+  reversing all signs describes the same direction.
+- For a 2-by-2 matrix, the scratch eigenvalue function uses the diagonal sum
+  (trace), determinant, and `trace**2 - 4*determinant` to calculate the two
+  eigenvalues. NumPy's `np.linalg.eig(A)` does this in a library call and
+  returns eigenvectors as columns. A pure 90-degree rotation has complex
+  eigenvalues and no real direction that stays fixed.
+- **Eigendecomposition** writes a matrix as `A = V @ D @ V^-1`: `V` stores
+  eigenvector directions, `D` stores their stretch amounts on its diagonal,
+  and `V^-1` changes coordinates into those directions. It means: switch to
+  the special directions, stretch each one, then switch back.
+- In **PCA**, eigenvectors of the covariance matrix give data directions and
+  their eigenvalues give the amount of variation in each. PCA keeps directions
+  with large eigenvalues first. In recurrent networks, repeatedly multiplying
+  by eigenvalues with magnitude above 1 can make values/gradients grow
+  explosively; magnitudes below 1 can make them shrink toward zero.
+- Ran `phases/01-math-foundations/03-matrix-transformations/code/transformations.py`
+  with the journey repository's `.venv` Python and NumPy 2.5.4. The
+  from-scratch and NumPy sections agreed on eigenvalues 3 and 1, the matching
+  directions, and the PCA rule to keep the direction with greatest variance.
+
 ## Questions initially missed or corrected
 
 - **Question:** How does LoRA use linear algebra to make fine-tuning a large
@@ -103,9 +154,19 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   column of `[[7, 8], [9, 10]]`.
 - **Broadcasting check:** Correctly explained that each bias value is added
   to the matching position in every row of the output table.
+- **Question:** What does `A = [[2,1],[1,2]]` reveal through
+  `A = V @ D @ V^-1`, given eigenvalues 3 and 1?
+  - **Initial answer:** It compresses every vector by a factor of 2.
+  - **Correct answer:** It stretches `[1,1]` by 3 and leaves `[1,-1]`
+    unchanged.
+  - **Simple explanation:** `[1,1]` becomes `[3,3]` (three times as long);
+    `[1,-1]` stays `[1,-1]` (multiplied by 1). `D` stores these two stretch
+    amounts, while `V` stores the directions.
 
 ## Quiz results
 
 - Lesson 1, Linear Algebra Intuition: **2/3 post (66.7%)**. Review LoRA's
   low-rank update and how two smaller matrices represent a large weight change.
 - Lesson 2, Vectors, Matrices & Operations: **2/2 post (100%)**.
+- Lesson 3, Matrix Transformations: **2/3 post (66.7%)**. Review how
+  eigenvectors pair with eigenvalues in an eigendecomposition.
