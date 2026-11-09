@@ -154,19 +154,15 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   column of `[[7, 8], [9, 10]]`.
 - **Broadcasting check:** Correctly explained that each bias value is added
   to the matching position in every row of the output table.
-- **Question:** What does `A = [[2,1],[1,2]]` reveal through
-  `A = V @ D @ V^-1`, given eigenvalues 3 and 1?
-  - **Initial answer:** It compresses every vector by a factor of 2.
-  - **Correct answer:** It stretches `[1,1]` by 3 and leaves `[1,-1]`
-    unchanged.
-  - **Simple explanation:** `[1,1]` becomes `[3,3]` (three times as long);
-    `[1,-1]` stays `[1,-1]` (multiplied by 1). `D` stores these two stretch
-    amounts, while `V` stores the directions.
+- **Answer clarification:** The eigendecomposition quiz response was typed as
+  C by mistake; the learner clarified they intended D. The intended answer
+  matches the concept explained and recalled: `[1,1]` is stretched by 3, while
+  `[1,-1]` is unchanged.
 
 ## Quiz results
 
 - Lesson 1, Linear Algebra Intuition: **2/3 post (66.7%)**. Review LoRA's
   low-rank update and how two smaller matrices represent a large weight change.
 - Lesson 2, Vectors, Matrices & Operations: **2/2 post (100%)**.
-- Lesson 3, Matrix Transformations: **2/3 post (66.7%)**. Review how
-  eigenvectors pair with eigenvalues in an eigendecomposition.
+- Lesson 3, Matrix Transformations: **3/3 post (100%)**. The learner clarified
+  that the final response was a typing slip and intended the correct answer.
