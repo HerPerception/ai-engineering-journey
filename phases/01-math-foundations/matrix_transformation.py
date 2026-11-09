@@ -50,18 +50,37 @@ new_point = mat_vec_mul(rotate_90, [1, 0])
 # The code shows both orders:
 
 
-from matrix import Matrix 
+def mat_mul(a, b):
+    rows_a = len(a)
+    cols_a = len(a[0])
+    cols_b = len(b[0])
+    return [
+        [
+            sum(a[i][k] * b[k][j] for k in range(cols_a))
+            for j in range(cols_b)
+        ]
+        for i in range(rows_a)
+    ]
+
+
 R = rotation_2d(math.pi / 2)
 S = scaling_2d(2, 0.5)
 
-# Creating an instance of the class 'Matrix' so I can import one of its method 'mat_mul':
-mat = Matrix()
-# mat_mul is a function that takes two matrices and returns their matrix product:
-rotate_then_scale = mat.mat_mul(S, R)
-scale_then_rotate = mat.mat_mul(R, S)
+# mat_mul takes two nested lists and returns their matrix product.
+rotate_then_scale = mat_mul(S, R)
+scale_then_rotate = mat_mul(R, S)
 
 # In S @ R, the point gets R first, then S: the matrix closest to the point acts first. Swapping them changes the result.
 
 # In S @ R, which happens first: rotation or scaling? rotation happens first.
 
 
+
+def eigenvalues_2x2(matrix):
+    a, b = matrix[0]
+    c, d = matrix[1]
+    trace = a + d
+    det = a * d - b * c
+    discriminant = trace**2 - 4 * det
+    root = discriminant**0.5
+    return ((trace + root) / 2, (trace - root) / 2)
