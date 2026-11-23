@@ -44,6 +44,38 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   residual, rank 1 for a redundant 2-by-2 matrix, and Gram-Schmidt vectors with
   length 1 and pairwise dot products near zero (small floating-point rounding).
 
+#### Lesson 1 revisit: beginner-friendly recap (2026-11-23)
+
+- In 2D, `[x, y]` gives horizontal and vertical movement from the start:
+  positive x is right, negative x is left; positive y is up, negative y is
+  down. Vectors can describe points, movements, or directions.
+- **Magnitude** is the straight-line length. For `[3, 4]`, the right-angle
+  triangle has sides 3 and 4: `3*3 + 4*4 = 25`, and `sqrt(25) = 5`.
+- **Normalization** makes a vector length 1 by dividing every part by the
+  original length. `[3,4]` becomes `[0.6,0.8]`: both movements shrink by the
+  same factor, so the direction stays the same.
+- Add and subtract vectors position by position. Multiply every part by a
+  single scalar to stretch, shrink, or reverse the direction.
+- A **dot product** multiplies numbers at matching positions and adds those
+  products, returning one number. For `[2,1]` and `[3,4]`, it is
+  `2*3 + 1*4 = 10`. **Cosine similarity** adjusts for vector lengths so it
+  compares direction; near 1 means similar direction.
+- A **matrix** is a table of weights. Each row combines the input numbers into
+  one output number. This is the basic operation in a neural-network layer.
+- **Projection** keeps the part of one vector along a chosen direction. The
+  leftover points at a right angle to that direction. Example: `[6,2]` onto
+  right `[1,0]` is `[6,0]`.
+- **Independent** vectors each add a new direction. `[2,0]` adds none beside
+  `[1,0]`, because it is just twice as long. **Rank** counts the independent
+  directions. A **basis** is a smallest independent set that can reach every
+  point in the space; right and up form a basis for a flat 2D grid.
+- **Gram-Schmidt** removes from each new vector the parts already covered by
+  earlier directions, skips a vector if nothing remains, and makes each
+  remaining vector length 1. The result has unit-length, perpendicular vectors.
+- Revisited and ran the lesson's vector program. Explained the dot product as
+  one number, solved magnitude and normalization exercises, identified
+  redundant directions, and explained why Gram-Schmidt skips them.
+
 ### Lesson 2: Vectors, Matrices & Operations
 
 - A matrix is a table of numbers. Its **shape** is rows by columns; a 2-by-3
@@ -147,6 +179,9 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   - **Simple explanation:** A 4096-by-4096 update has about 16.8 million
     values. Two rank-16 factors have about 131,000 values. LoRA trains this
     smaller update, assuming it can capture the useful change.
+- **Revisit:** The earlier LoRA misconception was reviewed. On the Phase 1,
+  Lesson 1 restart, the learner correctly chose that LoRA represents a large
+  weight change using two smaller matrices.
 - **Build correction:** Initially transposed `[[1, 2, 3], [4, 5, 6]]` as
   `[[1, 2], [3, 4], [5, 6]]`. The correct result is
   `[[1, 4], [2, 5], [3, 6]]`: each original column becomes a new row. A second
@@ -166,3 +201,5 @@ Plain-English notes from completed lessons will be added here. Missed questions 
 - Lesson 2, Vectors, Matrices & Operations: **2/2 post (100%)**.
 - Lesson 3, Matrix Transformations: **3/3 post (100%)**. The learner clarified
   that the final response was a typing slip and intended the correct answer.
+- Lesson 1 revisit, Linear Algebra Intuition: **3/3 post (100%)**. The earlier
+  LoRA review item was answered correctly on the restart.
