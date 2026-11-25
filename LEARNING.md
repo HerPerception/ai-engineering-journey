@@ -56,6 +56,7 @@ To understand AI tools I use, become an AI engineer, research. By the end, I wan
 | 2026-11-06 | 01/02 | 2/2 post (100%) | Distinguished element-wise from matrix multiplication, explained transpose, determinant and inverse, and described how bias broadcasting adds values at matching positions across rows. |
 | 2026-11-09 | 01/03 | 3/3 post (100%) | Applied rotation, scaling, shear and reflection; explained why transformation order matters; ran the NumPy comparison in `.venv`. Clarified that the final quiz answer was a typing slip and intended the correct eigenvector direction. |
 | 2026-11-23 | 01/01 (revisit) | 3/3 post (100%) | Restarted Linear Algebra Intuition with beginner-friendly explanations and exercises for magnitude, normalization, dot product, matrices, projection, independence, rank, basis, and Gram-Schmidt; corrected the earlier LoRA misconception. |
+| 2026-11-25 | 01/01 (coverage revisit) | — | Filled in the omitted concepts: matrix-matrix multiplication and shape rules, transpose, vector angles, attention scores, rank instability, QR, NumPy/PyTorch autodiff, and LoRA. |
 
 ## Review queue
 - Phase 0, Lessons 1 and 3: Review how to check PyTorch CUDA access with `torch.cuda.is_available()`, distinct from checking NVIDIA hardware and its driver with `nvidia-smi`. On Apple Silicon, check `torch.backends.mps.is_available()`.

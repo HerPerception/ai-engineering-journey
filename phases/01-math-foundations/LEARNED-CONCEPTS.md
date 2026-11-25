@@ -76,6 +76,59 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   one number, solved magnitude and normalization exercises, identified
   redundant directions, and explained why Gram-Schmidt skips them.
 
+#### Lesson 1: remaining concepts covered (2026-11-25)
+
+- A matrix transforms a vector. Its columns show where the basic right and up
+  directions move. The scaling matrix `[[2,0],[0,3]]` sends `[x,y]` to
+  `[2*x,3*y]`; it doubles horizontal movement and triples vertical movement.
+- **Matrix-matrix multiplication** chains transformations. Each result cell
+  comes from multiplying a row of the left matrix by a column of the right,
+  then adding. This differs from element-wise multiplication, which multiplies
+  values in matching positions. The left matrix's column count must equal the
+  right matrix's row count; e.g. `(2 by 3) @ (3 by 2)` produces `(2 by 2)`.
+- A **transpose** swaps rows and columns without changing the values. It is
+  useful when a calculation needs columns in the place of rows; neural-network
+  backpropagation uses transposed weight matrices to send gradients backward.
+- The **angle between vectors** can be found by first dividing their dot
+  product by both lengths (cosine similarity), then using inverse cosine
+  (`acos`) to get an angle. `math.degrees` converts radians to degrees. Cosine
+  similarity requires nonzero vectors; implementations clamp tiny rounding
+  errors to the valid range -1 through 1 before calling `acos`.
+- Dot products also score how well two AI vectors match. Embeddings represent
+  words, images, or users as number lists. In attention, a query vector
+  represents what a token seeks and key vectors represent information other
+  tokens offer; their dot products are relevance scores.
+- Exact duplicate or scaled features add no new information. In regression,
+  many weight combinations can then produce the same predictions. This is
+  **multicollinearity**. Full column rank means the columns are independent;
+  deficient rank means redundancy and possibly no unique solution. Nearly dependent
+  columns make weights sensitive to small data changes. Regularization prefers
+  smaller, steadier weights; SVD truncation can remove weak directions.
+- Projection applications: linear regression finds the closest point on its
+  fitted line or plane; PCA keeps directions with the most variation and
+  projects data onto them. The leftover after projection is the part not
+  explained by the chosen direction or surface.
+- **QR decomposition** writes a matrix as `A = Q @ R`. `Q` contains
+  orthonormal directions produced with Gram-Schmidt; `R` records the
+  coefficients needed to rebuild the original matrix. QR helps solve systems
+  and calculate eigenvalues stably. Whitening uses clean directions to remove
+  feature correlations and balance their scales.
+- NumPy provides `np.linalg.matrix_rank`, `np.linalg.qr`, and ready-made
+  projection arithmetic. PyTorch tensors can track how a result changes with
+  its inputs: `requires_grad=True` asks PyTorch to track the calculation, and
+  `.backward()` fills in `.grad`. For `dot(x, [1,0,0])`, the gradient with
+  respect to `x` is `[1,0,0]` because only the first input affects that result.
+- **LoRA** represents a large weight update with two smaller matrices. For a
+  4096-by-4096 update, the full update has about 16.8 million values, while
+  4096-by-16 and 16-by-4096 factors together have about 131,000. The middle
+  dimension 16 limits the update to a smaller set of directions; it does not
+  delete rows from the original model weights.
+- The lesson's Julia example performs the same vector, dot-product, and
+  matrix-vector operations with Julia syntax; the math is unchanged.
+- Lesson exercises also practice finding vector angles, scaling points,
+  comparing word-like vectors, checking orthonormal vectors, building a
+  rank-2 3-by-3 matrix, and projecting `[1,2,3]` onto `[1,1,1]`.
+
 ### Lesson 2: Vectors, Matrices & Operations
 
 - A matrix is a table of numbers. Its **shape** is rows by columns; a 2-by-3
@@ -203,3 +256,6 @@ Plain-English notes from completed lessons will be added here. Missed questions 
   that the final response was a typing slip and intended the correct answer.
 - Lesson 1 revisit, Linear Algebra Intuition: **3/3 post (100%)**. The earlier
   LoRA review item was answered correctly on the restart.
+- Lesson 1 coverage revisit: the omitted matrix operations, AI connections,
+  NumPy/PyTorch uses, QR, and LoRA details were explained. No additional quiz
+  was given.
