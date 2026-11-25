@@ -42,3 +42,5 @@ root2 = square_root(v2)
 cosine_similarity = dot_product/ (root1 * root2)
 print(cosine_similarity)
 print(project_onto(v1, v2))
+
+
